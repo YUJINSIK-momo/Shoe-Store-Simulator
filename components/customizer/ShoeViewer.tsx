@@ -35,7 +35,7 @@ export default function ShoeViewer({ partsConfig }: ShoeViewerProps) {
     <View style={styles.container}>
       <GestureDetector gesture={pan}>
         <View style={{ width: stageWidth, height: stageHeight }}>
-          <Canvas camera={{ position: [0, 0.7, 5.5], fov: 42 }}>
+          <Canvas camera={{ position: [0, 0.5, 6], fov: 40 }}>
             <Shoe3D partsConfig={partsConfig} rotationRef={rotationRef} />
           </Canvas>
         </View>
