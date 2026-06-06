@@ -1,5 +1,12 @@
 import { useState } from "react"
-import { View, Image, Text, TouchableOpacity, StyleSheet, Dimensions } from "react-native"
+import {
+  View,
+  Image,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  useWindowDimensions,
+} from "react-native"
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -10,7 +17,8 @@ import Animated, {
 import { Gesture, GestureDetector } from "react-native-gesture-handler"
 import { PartsConfig } from "../../types/shoe"
 
-const { width } = Dimensions.get("window")
+// 웹에서는 창 전체폭이 아니라 앱 프레임(최대 480)에 맞춘다
+const MAX_FRAME = 480
 
 const VIEWS = [
   { key: "side", label: "측면", source: require("../../assets/shoes/mockup_side.png") },
@@ -24,6 +32,8 @@ interface ShoeViewerProps {
 }
 
 export default function ShoeViewer({ partsConfig }: ShoeViewerProps) {
+  const { width: winWidth } = useWindowDimensions()
+  const frameWidth = Math.min(winWidth, MAX_FRAME)
   const [currentIndex, setCurrentIndex] = useState(0)
   const opacity = useSharedValue(1)
   const translateX = useSharedValue(0)
@@ -57,7 +67,13 @@ export default function ShoeViewer({ partsConfig }: ShoeViewerProps) {
   return (
     <View style={styles.container}>
       <GestureDetector gesture={swipeGesture}>
-        <Animated.View style={[styles.imageWrapper, animatedStyle]}>
+        <Animated.View
+          style={[
+            styles.imageWrapper,
+            { width: frameWidth * 0.88, height: frameWidth * 0.6 },
+            animatedStyle,
+          ]}
+        >
           <Image
             source={VIEWS[currentIndex].source}
             style={styles.image}
@@ -113,8 +129,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   imageWrapper: {
-    width: width * 0.88,
-    height: width * 0.6,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "transparent",
