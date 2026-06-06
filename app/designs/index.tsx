@@ -6,6 +6,8 @@ import Button from "../../components/ui/Button"
 import { useDesigns, useDeleteDesign } from "../../hooks/useDesigns"
 import { useAuthStore } from "../../store/authStore"
 import { useCustomizeStore } from "../../store/customizeStore"
+import { useCartStore } from "../../store/cartStore"
+import { DEFAULT_SHOE, DEFAULT_SIZE, DEFAULT_BASE_PRICE } from "../../constants/shoe"
 import { CustomDesign, ShoePart } from "../../types/shoe"
 
 const PART_LABELS: { key: ShoePart; label: string }[] = [
@@ -20,12 +22,18 @@ export default function DesignsScreen() {
   const router = useRouter()
   const user = useAuthStore((s) => s.user)
   const loadConfig = useCustomizeStore((s) => s.loadConfig)
+  const addItem = useCartStore((s) => s.addItem)
   const { data: designs, isLoading } = useDesigns()
   const deleteDesign = useDeleteDesign()
 
   const handleLoad = (design: CustomDesign) => {
     loadConfig(design.partsConfig)
     router.push("/customize")
+  }
+
+  const handleAddToCart = (design: CustomDesign) => {
+    addItem({ design, shoe: DEFAULT_SHOE, size: DEFAULT_SIZE, quantity: 1 })
+    router.push("/cart")
   }
 
   const handleDelete = (id: string) => {
@@ -74,6 +82,7 @@ export default function DesignsScreen() {
             <DesignCard
               design={item}
               onLoad={() => handleLoad(item)}
+              onAddToCart={() => handleAddToCart(item)}
               onDelete={() => handleDelete(item.id)}
             />
           )}
@@ -86,33 +95,43 @@ export default function DesignsScreen() {
 function DesignCard({
   design,
   onLoad,
+  onAddToCart,
   onDelete,
 }: {
   design: CustomDesign
   onLoad: () => void
+  onAddToCart: () => void
   onDelete: () => void
 }) {
   const date = new Date(design.createdAt)
   const dateLabel = `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, "0")}.${String(date.getDate()).padStart(2, "0")}`
 
   return (
-    <TouchableOpacity style={styles.card} onPress={onLoad} activeOpacity={0.8}>
-      <View style={styles.swatches}>
-        {PART_LABELS.map(({ key }) => (
-          <View
-            key={key}
-            style={[styles.swatch, { backgroundColor: design.partsConfig[key].color }]}
-          />
-        ))}
-      </View>
-      <View style={styles.cardInfo}>
-        <Text style={styles.cardTitle}>커스텀 디자인</Text>
-        <Text style={styles.cardDate}>{dateLabel} · 탭하면 불러오기</Text>
-      </View>
-      <TouchableOpacity onPress={onDelete} hitSlop={8} style={styles.delete}>
-        <Text style={styles.deleteText}>삭제</Text>
+    <View style={styles.card}>
+      <TouchableOpacity style={styles.cardMain} onPress={onLoad} activeOpacity={0.8}>
+        <View style={styles.swatches}>
+          {PART_LABELS.map(({ key }) => (
+            <View
+              key={key}
+              style={[styles.swatch, { backgroundColor: design.partsConfig[key].color }]}
+            />
+          ))}
+        </View>
+        <View style={styles.cardInfo}>
+          <Text style={styles.cardTitle}>커스텀 디자인</Text>
+          <Text style={styles.cardDate}>{dateLabel} · 탭하면 불러오기</Text>
+          <Text style={styles.cardPrice}>{DEFAULT_BASE_PRICE.toLocaleString()}원</Text>
+        </View>
       </TouchableOpacity>
-    </TouchableOpacity>
+      <View style={styles.actions}>
+        <TouchableOpacity onPress={onAddToCart} style={styles.cartBtn}>
+          <Text style={styles.cartBtnText}>담기</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={onDelete} hitSlop={8} style={styles.delete}>
+          <Text style={styles.deleteText}>삭제</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
   )
 }
 
@@ -124,10 +143,16 @@ const styles = StyleSheet.create({
   card: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 14,
+    gap: 12,
     backgroundColor: "#FFFFFF",
     borderRadius: 16,
     padding: 16,
+  },
+  cardMain: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 14,
   },
   swatches: {
     flexDirection: "row",
@@ -153,12 +178,33 @@ const styles = StyleSheet.create({
     color: "#AAAAAA",
     marginTop: 3,
   },
+  cardPrice: {
+    fontSize: 13,
+    fontWeight: "700",
+    color: "#000000",
+    marginTop: 4,
+  },
+  actions: {
+    alignItems: "center",
+    gap: 8,
+  },
+  cartBtn: {
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 10,
+    backgroundColor: "#000000",
+  },
+  cartBtnText: {
+    fontSize: 13,
+    fontWeight: "700",
+    color: "#FFFFFF",
+  },
   delete: {
-    paddingVertical: 6,
-    paddingHorizontal: 10,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
   },
   deleteText: {
-    fontSize: 13,
+    fontSize: 12,
     color: "#E03131",
     fontWeight: "500",
   },
