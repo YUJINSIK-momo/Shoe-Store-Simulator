@@ -1,6 +1,6 @@
 import { useLayoutEffect, useMemo, useRef, type RefObject } from "react"
-import { useFrame } from "@react-three/fiber"
-import { useGLTF } from "@react-three/drei"
+import { useFrame, useLoader } from "@react-three/fiber"
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js"
 import { Asset } from "expo-asset"
 import * as THREE from "three"
 import { PartsConfig } from "../../../types/shoe"
@@ -8,6 +8,7 @@ import type { ShoeRotation } from "./Shoe3D"
 
 // 'Sneakers' by Poly by Google (CC-BY) — OBJ→GLB 변환본. 부위가 노드로 분리돼 있어
 // 노드 이름으로 부위별 색을 칠한다. (밑창은 본체에 포함돼 별도 색 없음)
+// 주의: drei의 useGLTF는 import.meta를 써서 Expo 웹 번들을 깨뜨림 → three GLTFLoader 직접 사용.
 const MODEL_URI = Asset.fromModule(
   require("../../../assets/models/sneakers.glb"),
 ).uri
@@ -26,12 +27,12 @@ function colorForName(name: string, p: PartsConfig): string {
 }
 
 export default function SneakerModel({ partsConfig, rotationRef }: SneakerModelProps) {
-  const { scene } = useGLTF(MODEL_URI)
+  const gltf = useLoader(GLTFLoader, MODEL_URI)
   const group = useRef<THREE.Group>(null)
 
   // 공유 캐시 오염 방지 위해 복제 + 중앙정렬/스케일 정규화
   const model = useMemo(() => {
-    const root = scene.clone(true)
+    const root = gltf.scene.clone(true)
     const box = new THREE.Box3().setFromObject(root)
     const size = box.getSize(new THREE.Vector3())
     const center = box.getCenter(new THREE.Vector3())
@@ -41,7 +42,7 @@ export default function SneakerModel({ partsConfig, rotationRef }: SneakerModelP
     wrap.add(root)
     wrap.scale.setScalar(3.4 / maxDim)
     return wrap
-  }, [scene])
+  }, [gltf])
 
   // 부위 이름 기준으로 새 머티리얼 색 적용
   useLayoutEffect(() => {
@@ -75,5 +76,3 @@ export default function SneakerModel({ partsConfig, rotationRef }: SneakerModelP
     </>
   )
 }
-
-useGLTF.preload(MODEL_URI)
