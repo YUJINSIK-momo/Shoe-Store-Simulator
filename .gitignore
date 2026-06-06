@@ -37,6 +37,10 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
+# Claude Code (개인 설정·로컬 메모는 커밋하지 않음)
+.claude/settings.local.json
+.claude.local.md
+
 # generated native folders
 /ios
 /android
