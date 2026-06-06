@@ -16,10 +16,10 @@
 
 ## 🖐 선행 수동 작업 — Supabase 테이블 생성
 
-`supabase/custom_designs.sql`의 SQL을 **Supabase 대시보드 → SQL Editor**에서 한 번 실행한다.
-(테이블 + RLS 정책: 본인 디자인만 접근 가능)
+`custom_designs` 테이블이 있어야 저장이 동작한다.
+→ phase-04에서 마이그레이션으로 일원화됨: **`supabase/migrations/`** 를 적용한다 (`supabase/README.md` 참고).
 
-- [ ] 🖐 `custom_designs` 테이블 + RLS 생성 (SQL 실행)
+- [ ] 🖐 `supabase/migrations/` 적용 (최소 `..._custom_designs.sql`) — 테이블 + RLS 생성
 
 ---
 

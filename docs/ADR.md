@@ -85,6 +85,16 @@
 
 ---
 
+## ADR-009: DB는 Supabase 마이그레이션 기반, dev/prod 분리, RDS는 이식 대비만
+
+- **결정**: 스키마의 단일 진실을 `supabase/migrations/`(순수 Postgres SQL)로 둔다. 환경은 dev/prod **Supabase 프로젝트 2개**로 분리하고 앱/CI는 env로 전환. AWS RDS는 **지금 도입하지 않고**, 마이그레이션을 RDS 이식 가능한 형태로 작성만 한다.
+- **이유**: RDS는 순수 Postgres라 Auth·RLS·Storage·자동 API가 없어 **NestJS 백엔드가 선행**돼야 함(현재 없음). 지금 RDS를 묶으면 인증 재구현까지 떠안는 큰 작업. 반면 마이그레이션 체계화+환경분리는 즉시 가치(재현성·안전한 테스트)를 주고, 순수 SQL이라 후일 RDS로 이전 시 베이스가 된다.
+- **대안**: 지금 NestJS+RDS 풀백엔드 구축 / Supabase 단일 환경 유지(분리 없음)
+- **트레이드오프**: RLS의 `auth.uid()`·`auth.users` FK·`handle_new_user` 트리거는 Supabase 전용 → RDS 전환 시 그 부분만 앱 레벨 인가로 교체 필요(테이블 DDL은 그대로 이식). prod 프로젝트 신설·마이그레이션 재적용은 수동.
+- **결정일**: 2026-06-06
+
+---
+
 ## 템플릿
 
 새 ADR을 추가할 때 이 형식을 복사:

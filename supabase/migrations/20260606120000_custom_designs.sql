@@ -1,12 +1,11 @@
--- custom_designs 테이블 + RLS
--- 실행 위치: Supabase 대시보드 → SQL Editor → 새 쿼리에 붙여넣고 Run
--- (한 번만 실행하면 된다. 재실행해도 안전하도록 IF NOT EXISTS 사용)
+-- custom_designs 테이블 + RLS (본인 디자인만 접근)
+-- idempotent: 재실행 안전
 
 create table if not exists public.custom_designs (
   id           uuid primary key default gen_random_uuid(),
   user_id      uuid not null references auth.users (id) on delete cascade,
-  shoe_id      text,                       -- 신발 카탈로그 도입 전이라 nullable
-  parts_config jsonb not null,             -- 부위별 색상/소재
+  shoe_id      text,                       -- 카탈로그(shoes) FK는 추후 전환
+  parts_config jsonb not null,
   thumbnail_url text,
   created_at   timestamptz not null default now()
 );
@@ -14,7 +13,6 @@ create table if not exists public.custom_designs (
 create index if not exists custom_designs_user_id_idx
   on public.custom_designs (user_id, created_at desc);
 
--- Row Level Security: 본인 행만 접근
 alter table public.custom_designs enable row level security;
 
 drop policy if exists "본인 디자인 조회" on public.custom_designs;
