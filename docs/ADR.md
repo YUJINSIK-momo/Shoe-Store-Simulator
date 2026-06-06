@@ -75,6 +75,16 @@
 
 ---
 
+## ADR-008: 디자인 저장은 Supabase 직접, 미리보기는 parts_config
+
+- **결정**: `custom_designs`는 NestJS 백엔드 대신 **supabase-js로 Supabase에 직접** 저장(`api/designs.ts`). 갤러리 썸네일은 별도 이미지 업로드 없이 **parts_config의 부위 색상 스와치**로 렌더. RLS로 본인 행만 접근.
+- **이유**: 백엔드가 아직 없고 인증이 이미 Supabase다. 썸네일 이미지 생성(렌더→캡처→Storage)은 비용이 커 MVP에서 제외. 색상 스와치만으로 디자인 식별 충분.
+- **대안**: NestJS 경유 저장, ViewShot으로 실제 썸네일 캡처 후 Storage 업로드
+- **트레이드오프**: 서버 측 검증/가공 없음(RLS에 의존). 썸네일이 실제 신발 렌더가 아니라 색상 요약. 신발 카탈로그(`shoes`) 도입 전이라 `shoe_id`는 nullable.
+- **결정일**: 2026-06-06
+
+---
+
 ## 템플릿
 
 새 ADR을 추가할 때 이 형식을 복사:

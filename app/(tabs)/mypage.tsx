@@ -1,18 +1,28 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native"
-import { SafeAreaView } from "react-native-safe-area-context"
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native"
 import { useRouter } from "expo-router"
+import Screen from "../../components/ui/Screen"
+import ScreenHeader from "../../components/ui/ScreenHeader"
 import { useAuthStore } from "../../store/authStore"
 
-const MENU_ITEMS = ["주문 내역", "저장된 디자인", "알림 설정"]
+const MENU_ITEMS: { label: string; route?: "/designs" }[] = [
+  { label: "주문 내역" },
+  { label: "저장된 디자인", route: "/designs" },
+  { label: "알림 설정" },
+]
 
 export default function MypageScreen() {
   const router = useRouter()
   const user = useAuthStore((s) => s.user)
   const signOut = useAuthStore((s) => s.signOut)
 
+  const handleMenu = (route?: "/designs") => {
+    if (route) router.push(route)
+    else Alert.alert("준비 중", "곧 제공될 기능이에요.")
+  }
+
   return (
-    <SafeAreaView style={styles.safe}>
-      <Text style={styles.title}>마이페이지</Text>
+    <Screen>
+      <ScreenHeader title="마이페이지" />
 
       <View style={styles.profile}>
         <View style={styles.avatar} />
@@ -31,8 +41,12 @@ export default function MypageScreen() {
       </View>
 
       {MENU_ITEMS.map((item) => (
-        <TouchableOpacity key={item} style={styles.menuItem}>
-          <Text style={styles.menuLabel}>{item}</Text>
+        <TouchableOpacity
+          key={item.label}
+          style={styles.menuItem}
+          onPress={() => handleMenu(item.route)}
+        >
+          <Text style={styles.menuLabel}>{item.label}</Text>
           <Text style={styles.arrow}>{">"}</Text>
         </TouchableOpacity>
       ))}
@@ -42,21 +56,11 @@ export default function MypageScreen() {
           <Text style={styles.logoutText}>로그아웃</Text>
         </TouchableOpacity>
       )}
-    </SafeAreaView>
+    </Screen>
   )
 }
 
 const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-    backgroundColor: "#FAFAFA",
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: "#111111",
-    padding: 20,
-  },
   profile: {
     flexDirection: "row",
     alignItems: "center",

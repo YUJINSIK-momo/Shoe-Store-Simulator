@@ -1,16 +1,16 @@
 import { Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native"
-import { SafeAreaView } from "react-native-safe-area-context"
 import { useRouter } from "expo-router"
+import Screen from "../../components/ui/Screen"
+import ScreenHeader from "../../components/ui/ScreenHeader"
 import Card from "../../components/ui/Card"
 
 export default function HomeScreen() {
   const router = useRouter()
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <Screen>
+      <ScreenHeader title="신발 커스터마이저" subtitle="나만의 신발을 디자인하세요" />
       <ScrollView contentContainerStyle={styles.scroll}>
-        <Text style={styles.title}>신발 커스터마이저</Text>
-        <Text style={styles.subtitle}>나만의 신발을 디자인하세요</Text>
         <TouchableOpacity activeOpacity={0.85} onPress={() => router.push("/customize")}>
           <Card style={styles.banner}>
             <Text style={styles.bannerTitle}>새 커스텀 시작하기</Text>
@@ -20,29 +20,22 @@ export default function HomeScreen() {
             <Text style={styles.bannerCta}>시작하기 →</Text>
           </Card>
         </TouchableOpacity>
+
+        <TouchableOpacity activeOpacity={0.85} onPress={() => router.push("/designs")}>
+          <Card style={styles.subCard}>
+            <Text style={styles.subCardTitle}>저장된 디자인</Text>
+            <Text style={styles.subCardText}>내가 만든 커스텀을 다시 보고 불러오기</Text>
+          </Card>
+        </TouchableOpacity>
       </ScrollView>
-    </SafeAreaView>
+    </Screen>
   )
 }
 
 const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-    backgroundColor: "#FAFAFA",
-  },
   scroll: {
     padding: 20,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "800",
-    color: "#111111",
-    marginBottom: 6,
-  },
-  subtitle: {
-    fontSize: 15,
-    color: "#888888",
-    marginBottom: 24,
+    gap: 12,
   },
   banner: {
     backgroundColor: "#000000",
@@ -64,5 +57,18 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#FFFFFF",
     marginTop: 16,
+  },
+  subCard: {
+    padding: 20,
+  },
+  subCardTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#111111",
+    marginBottom: 4,
+  },
+  subCardText: {
+    fontSize: 13,
+    color: "#888888",
   },
 })

@@ -1,32 +1,24 @@
 import { Text, StyleSheet } from "react-native"
-import { SafeAreaView } from "react-native-safe-area-context"
-import { useLocalSearchParams } from "expo-router"
+import { useLocalSearchParams, useRouter } from "expo-router"
+import Screen from "../../components/ui/Screen"
+import ScreenHeader from "../../components/ui/ScreenHeader"
 
 export default function ProductDetailScreen() {
+  const router = useRouter()
   const { id } = useLocalSearchParams<{ id: string }>()
 
   return (
-    <SafeAreaView style={styles.safe}>
-      <Text style={styles.title}>신발 상세</Text>
+    <Screen>
+      <ScreenHeader title="신발 상세" onBack={() => router.back()} />
       <Text style={styles.id}>ID: {id}</Text>
-    </SafeAreaView>
+    </Screen>
   )
 }
 
 const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-    backgroundColor: "#FAFAFA",
-    padding: 20,
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: "#111111",
-    marginBottom: 8,
-  },
   id: {
     fontSize: 14,
     color: "#888888",
+    paddingHorizontal: 20,
   },
 })
