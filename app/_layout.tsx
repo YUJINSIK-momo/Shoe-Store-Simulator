@@ -2,8 +2,10 @@ import { useEffect } from "react"
 import { Stack, useRouter, useSegments } from "expo-router"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
-import { ActivityIndicator, StyleSheet, View } from "react-native"
+import { ActivityIndicator, Platform, StyleSheet, View } from "react-native"
 import { useAuthStore } from "../store/authStore"
+
+const isWeb = Platform.OS === "web"
 
 const queryClient = new QueryClient()
 
@@ -40,9 +42,11 @@ function RootNavigator() {
 export default function RootLayout() {
   return (
     <GestureHandlerRootView style={styles.root}>
-      <QueryClientProvider client={queryClient}>
-        <RootNavigator />
-      </QueryClientProvider>
+      <View style={styles.appFrame}>
+        <QueryClientProvider client={queryClient}>
+          <RootNavigator />
+        </QueryClientProvider>
+      </View>
     </GestureHandlerRootView>
   )
 }
@@ -50,6 +54,14 @@ export default function RootLayout() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
+    // 웹에서는 모바일 폭으로 가운데 정렬해 화면이 과하게 커지지 않게 한다
+    ...(isWeb ? { alignItems: "center", backgroundColor: "#E9E9E9" } : null),
+  },
+  appFrame: {
+    flex: 1,
+    width: "100%",
+    backgroundColor: "#FAFAFA",
+    ...(isWeb ? { maxWidth: 480 } : null),
   },
   loading: {
     flex: 1,
