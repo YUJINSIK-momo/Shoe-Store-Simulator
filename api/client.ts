@@ -1,4 +1,5 @@
 import axios from "axios"
+import { supabase } from "./supabase"
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL ?? "http://localhost:3000"
 
@@ -10,8 +11,12 @@ const apiClient = axios.create({
   },
 })
 
-apiClient.interceptors.request.use((config) => {
-  // TODO: Supabase Auth 토큰 추가
+apiClient.interceptors.request.use(async (config) => {
+  const { data } = await supabase.auth.getSession()
+  const token = data.session?.access_token
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
   return config
 })
 
