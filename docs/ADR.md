@@ -105,6 +105,16 @@
 
 ---
 
+## ADR-011: 3D 미리보기는 react-three-fiber + expo-gl (플레이스홀더 우선)
+
+- **결정**: 미리보기를 SVG(2D)에서 **3D**로 전환. `@react-three/fiber@9` + `three` + `expo-gl`로 웹·네이티브 모두 렌더. Canvas는 플랫폼별 파일(`ThreeCanvas.tsx`/`.native.tsx`)로 분기. 우선 **원시 도형 플레이스홀더 신발**로 파이프라인·부위 재색칠·회전을 완성하고, 진짜 GLB 모델은 후속(phase-05 C).
+- **이유**: "진짜 신발처럼 돌려보며 부위 색 변경"이 목표. r3f가 웹/RN 공통 표준. 모델 소싱이 관건이라, 모델 없이도 검증 가능하도록 플레이스홀더부터.
+- **대안**: 2D 사실적(이미지 레이어 틴팅, 회전 불가), 처음부터 GLB(모델 의존), `<model-viewer>`(웹 전용)
+- **트레이드오프**: 번들 크기 큼(three ~수 MB), 저사양 성능 고려, 현재 외형은 블록형(사실적이지 않음 — GLB 교체로 해결). `react/no-unknown-property`·`react-hooks/refs`는 r3f/제스처 패턴상 `components/customizer/**`에서 비활성.
+- **결정일**: 2026-06-06
+
+---
+
 ## 템플릿
 
 새 ADR을 추가할 때 이 형식을 복사:
