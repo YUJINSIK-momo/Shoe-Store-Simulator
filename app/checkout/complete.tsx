@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from "react-native"
-import { SafeAreaView } from "react-native-safe-area-context"
 import { useRouter } from "expo-router"
+import Screen from "../../components/ui/Screen"
 import Button from "../../components/ui/Button"
 import { useCartStore } from "../../store/cartStore"
 
@@ -14,28 +14,20 @@ export default function CheckoutCompleteScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <Screen>
       <View style={styles.content}>
         <Text style={styles.icon}>✓</Text>
         <Text style={styles.title}>결제 완료!</Text>
         <Text style={styles.subtitle}>
           주문이 접수되었습니다.{"\n"}제작이 시작되면 알림을 드릴게요.
         </Text>
-        <Button
-          label="홈으로 돌아가기"
-          onPress={handleDone}
-          style={styles.button}
-        />
+        <Button label="홈으로 돌아가기" onPress={handleDone} style={styles.button} />
       </View>
-    </SafeAreaView>
+    </Screen>
   )
 }
 
 const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-    backgroundColor: "#FAFAFA",
-  },
   content: {
     flex: 1,
     alignItems: "center",

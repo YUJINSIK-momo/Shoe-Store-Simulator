@@ -17,6 +17,7 @@ interface CustomizeState {
   setSelectedPart: (part: ShoePart | null) => void
   updatePartColor: (part: ShoePart, color: string) => void
   updatePartMaterial: (part: ShoePart, material: Material) => void
+  loadConfig: (config: PartsConfig) => void
   resetConfig: () => void
 }
 
@@ -40,6 +41,7 @@ export const useCustomizeStore = create<CustomizeState>((set) => ({
         [part]: { ...state.partsConfig[part], material },
       },
     })),
+  loadConfig: (config) => set({ partsConfig: config, selectedPart: null }),
   resetConfig: () =>
     set({ partsConfig: DEFAULT_PARTS_CONFIG, selectedPart: null }),
 }))

@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet } from "react-native"
-import { SafeAreaView } from "react-native-safe-area-context"
-import { useLocalSearchParams } from "expo-router"
+import { useLocalSearchParams, useRouter } from "expo-router"
+import Screen from "../../components/ui/Screen"
+import ScreenHeader from "../../components/ui/ScreenHeader"
 import { OrderStatus } from "../../types/order"
 
 const STATUS_LABELS: Record<OrderStatus, string> = {
@@ -20,52 +21,39 @@ const STATUS_ORDER: OrderStatus[] = [
 ]
 
 export default function OrderTrackingScreen() {
+  const router = useRouter()
   const { id } = useLocalSearchParams<{ id: string }>()
   const currentStatus: OrderStatus = "manufacturing"
 
   return (
-    <SafeAreaView style={styles.safe}>
-      <Text style={styles.title}>주문 추적</Text>
-      <Text style={styles.orderId}>주문번호: {id}</Text>
+    <Screen>
+      <ScreenHeader
+        title="주문 추적"
+        subtitle={`주문번호: ${id}`}
+        onBack={() => router.back()}
+      />
       <View style={styles.timeline}>
         {STATUS_ORDER.map((status, index) => {
-          const isCompleted =
-            STATUS_ORDER.indexOf(currentStatus) >= index
+          const isCompleted = STATUS_ORDER.indexOf(currentStatus) >= index
           return (
             <View key={status} style={styles.step}>
               <View style={[styles.dot, isCompleted && styles.activeDot]} />
-              <Text
-                style={[styles.stepLabel, isCompleted && styles.activeLabel]}
-              >
+              <Text style={[styles.stepLabel, isCompleted && styles.activeLabel]}>
                 {STATUS_LABELS[status]}
               </Text>
             </View>
           )
         })}
       </View>
-    </SafeAreaView>
+    </Screen>
   )
 }
 
 const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-    backgroundColor: "#FAFAFA",
-    padding: 20,
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: "#111111",
-    marginBottom: 4,
-  },
-  orderId: {
-    fontSize: 13,
-    color: "#888888",
-    marginBottom: 32,
-  },
   timeline: {
     gap: 24,
+    padding: 20,
+    marginTop: 12,
   },
   step: {
     flexDirection: "row",

@@ -20,7 +20,7 @@ export interface ShoeModel {
 export interface CustomDesign {
   id: string
   userId: string
-  shoeId: string
+  shoeId?: string
   partsConfig: PartsConfig
   thumbnailUrl?: string
   createdAt: string
