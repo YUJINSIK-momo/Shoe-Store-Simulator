@@ -10,6 +10,7 @@ module.exports = [
     rules: {
       "react/no-unknown-property": "off",
       "react-hooks/refs": "off",
+      "@typescript-eslint/no-require-imports": "off",
     },
   },
   {
